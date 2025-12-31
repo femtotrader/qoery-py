@@ -1,0 +1,515 @@
+openapi: 3.0.3
+info:
+  title: qoery
+  version: 0.1.0
+  description: The Cheapest DeFi Data API.
+servers:
+  - url: https://api.qoery.com/v0
+    description: Production API Server
+tags:
+  - name: Market Data
+    description: Historical and live price/volume data (main API)
+  - name: Discovery
+    description: Pool and token discovery endpoints (main API)
+  - name: Account
+    description: API usage and account management (utility)
+  - name: System
+    description: System health and status endpoints (utility)
+
+components:
+  securitySchemes:
+    ApiKeyAuthHeader:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    ApiKeyAuthQuery:
+      type: apiKey
+      in: query
+      name: api_key
+
+  schemas:
+    Candle:
+      type: object
+      properties:
+        time:
+          $ref: '#/components/schemas/ISOTimestamp'
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        close:
+          type: number
+        volume:
+          type: number
+      example:
+        time: "2023-11-30T12:00:00Z"
+        open: 2050.50
+        high: 2060.00
+        low: 2045.20
+        close: 2055.80
+        volume: 1500000.50
+
+    CandlesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Candle'
+        credits_used:
+          type: integer
+          description: Number of credits consumed by this request
+          example: 5
+
+    Tick:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique swap transaction ID
+        timestamp:
+          $ref: '#/components/schemas/ISOTimestamp'
+        price:
+          type: number
+          description: Execution price (token1 per token0, e.g. USDT per WBTC)
+        side:
+          type: string
+          enum: [buy, sell]
+          description: Trade direction - "buy" means buying token0, "sell" means selling token0
+        amount0:
+          type: string
+          description: Amount of token0 traded (negative = sold, positive = bought)
+        amount1:
+          type: string
+          description: Amount of token1 traded (negative = sold, positive = bought)
+        amountUSD:
+          type: number
+          description: USD value of the swap
+        sqrtPriceX96:
+          type: string
+          description: Square root price in X96 format (for advanced users)
+        token0:
+          type: string
+          description: Token0 symbol
+        token1:
+          type: string
+          description: Token1 symbol
+
+    TicksResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tick'
+        credits_used:
+          type: integer
+          description: Number of credits consumed by this request
+          example: 2
+
+    ISOTimestamp:
+      type: string
+      format: date-time
+      description: ISO 8601 timestamp
+      example: "2023-11-30T12:00:00Z"
+
+    Pool:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Pool contract address
+        network:
+          type: string
+          example: "ethereum"
+        protocolVersion:
+          type: string
+          description: DEX protocol identifier (e.g., "uniswap-v3", "uniswap-v4")
+          enum: ["uniswap-v3", "uniswap-v4"]
+        feeTier:
+          type: string
+          description: Fee tier for the pool
+          example: "3000"
+        liquidity:
+          type: string
+          description: Current liquidity in the pool
+        sqrtPrice:
+          type: string
+          description: Square root price (X96 format)
+        volumeUSD:
+          type: string
+          description: Trading volume in USD
+        txCount:
+          type: string
+          description: Number of transactions
+        totalValueLockedUSD:
+          type: string
+          description: Total value locked in USD
+        token0:
+          $ref: '#/components/schemas/Token'
+        token1:
+          $ref: '#/components/schemas/Token'
+      example:
+        id: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+        network: "ethereum"
+        protocolVersion: "uniswap-v3"
+        feeTier: "3000"
+        liquidity: "45000000000000000000"
+        sqrtPrice: "1234567890123456789"
+        volumeUSD: "5000000.50"
+        txCount: "12345"
+        totalValueLockedUSD: "10000000.00"
+        token0:
+          symbol: "WETH"
+          name: "Wrapped Ether"
+          address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+        token1:
+          symbol: "USDC"
+          name: "USD Coin"
+          address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+
+    PoolsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pool'
+        credits_used:
+          type: integer
+          description: Number of credits consumed by this request
+          example: 3
+
+    Token:
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: "WETH"
+        name:
+          type: string
+          example: "Wrapped Ether"
+        address:
+          type: string
+          example: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+        decimals:
+          type: integer
+          description: Token decimals
+          example: 18
+
+    UsageResponse:
+      type: object
+      properties:
+        credits:
+          type: object
+          properties:
+            minute:
+              type: object
+              properties:
+                used:
+                  type: integer
+                  description: Credits used in the current minute
+                limit:
+                  type: integer
+                  description: Credit limit per minute
+                remaining:
+                  type: integer
+                  description: Credits remaining in the current minute
+                reset_at:
+                  $ref: '#/components/schemas/ISOTimestamp'
+            month:
+              type: object
+              properties:
+                used:
+                  type: integer
+                  description: Credits used in the current billing period
+                limit:
+                  type: integer
+                  description: Credit limit per month
+                remaining:
+                  type: integer
+                  description: Credits remaining in the current billing period
+                reset_at:
+                  $ref: '#/components/schemas/ISOTimestamp'
+                billing_period_start:
+                  oneOf:
+                    - $ref: '#/components/schemas/ISOTimestamp'
+                    - type: "null"
+                  description: Billing period start timestamp, or null if using calendar month billing
+        api_calls:
+          type: object
+          properties:
+            minute:
+              type: object
+              properties:
+                used:
+                  type: integer
+                  description: API calls made in the current minute
+            month:
+              type: object
+              properties:
+                used:
+                  type: integer
+                  description: API calls made in the current billing period
+        subscription_plan:
+          type: string
+          description: Current subscription plan
+          example: "free"
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        timestamp:
+          type: integer
+          description: Unix timestamp in seconds
+          example: 1701345600
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+  parameters:
+    SymbolParam:
+      name: symbol
+      in: query
+      required: false
+      description: |
+        Trading pair symbol (e.g., "ETH-USDC"). Case-insensitive.
+        **Note:** Provide either `symbol` OR `pool`, not both.
+      schema:
+        type: string
+        example: "ETH-USDC"
+
+    PoolParam:
+      name: pool
+      in: query
+      required: false
+      description: |
+        Pool contract address. Use this instead of symbol for faster responses, and less credits used.
+        **Note:** Provide either `symbol` OR `pool`, not both.
+      schema:
+        type: string
+        example: "0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640"
+    
+    IntervalParam:
+      name: interval
+      in: query
+      required: true
+      description: |
+        Candle time interval. Fully flexible.
+        Format: `[number][unit]` where unit is:
+        - `s` = seconds (e.g., "30s", "45s")
+        - `m` = minutes (e.g., "1m", "5m", "15m")
+        - `h` = hours (e.g., "1h", "4h", "12h")
+        - `d` = days (e.g., "1d")
+        
+        Maximum: 1d
+      schema:
+        type: string
+        pattern: '^\d+[smhd]$'
+        example: "15m"
+
+
+security:
+  - ApiKeyAuthHeader: []
+  - ApiKeyAuthQuery: []
+
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Check if the API is running. No authentication required.
+      tags:
+        - System
+      security: []  # No authentication required
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /candles:
+    get:
+      summary: Get OHLCV Candles
+      description: |-
+        Fetch OHLCV candles for a given symbol pair OR specific pool.
+        
+        **Required:** Provide either `symbol` OR `pool` parameter (mutually exclusive).
+        
+        **Optimization:** Use `pool` address for faster response (1 subgraph request vs 2).
+        
+        **Time Range Defaults:**
+        - If `from` is omitted: calculated based on `interval` and `limit` to fetch only the requested number of candles (e.g., with `limit=5` and `interval=15m`, defaults to 75 minutes ago)
+        - If `to` is omitted: defaults to current time (live data)
+        
+        **Credits:** Each GraphQL query costs 1 credit. Total credits depend on data fetched (swaps, time range, pagination). Using `pool` skips discovery and is more efficient.
+      tags:
+        - Market Data
+      parameters:
+        - $ref: '#/components/parameters/SymbolParam'
+        - $ref: '#/components/parameters/PoolParam'
+        - $ref: '#/components/parameters/IntervalParam'
+        - name: from
+          in: query
+          description: |
+            Start timestamp (ISO 8601 format).
+            **Default:** Calculated based on `interval` and `limit` to fetch only the requested number of candles (e.g., with `limit=5` and `interval=15m`, defaults to 75 minutes ago).
+          schema:
+            $ref: '#/components/schemas/ISOTimestamp'
+          example: "2023-11-29T12:00:00Z"
+        - name: to
+          in: query
+          description: |
+            End timestamp (ISO 8601 format).
+            **Default:** Current time (live data).
+          schema:
+            $ref: '#/components/schemas/ISOTimestamp'
+          example: "2023-11-30T12:00:00Z"
+        - name: networks
+          in: query
+          description: |
+            Comma-separated list of networks to query.
+            **Supported networks:** ethereum, arbitrum, polygon, base, optimism
+            **Default:** If not specified, queries `ethereum` first (fastest), then expands to `ethereum,arbitrum,polygon` if no results found.
+          schema:
+            type: string
+            example: "ethereum,arbitrum"
+        - name: limit
+          in: query
+          description: Maximum number of candles to return. Defaults to 5. Maximum is 100.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 5
+          example: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandlesResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /pools:
+    get:
+      summary: Find Liquidity Pools
+      description: Find the best liquidity pools for a given symbol pair across all networks.
+      tags:
+        - Discovery
+      parameters:
+        - name: symbol
+          in: query
+          required: true
+          description: Trading pair symbol (e.g., "ETH-USDC"). Case-insensitive.
+          schema:
+            type: string
+            example: "ETH-USDC"
+      responses:
+        '200':
+          description: List of found pools sorted by liquidity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoolsResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ticks:
+    get:
+      summary: Get Raw Tick Data
+      description: |-
+        Fetch raw tick-level swap data for a pool (no OHLCV aggregation).
+        
+        **Required:** Provide either `symbol` OR `pool` parameter (mutually exclusive).
+        
+        **Use case:** Real-time trade monitoring, custom aggregation, order flow analysis.
+      tags:
+        - Market Data
+      parameters:
+        - $ref: '#/components/parameters/SymbolParam'
+        - $ref: '#/components/parameters/PoolParam'
+        - name: from
+          in: query
+          description: Start timestamp (ISO 8601). Default is 1 hour ago.
+          schema:
+            $ref: '#/components/schemas/ISOTimestamp'
+        - name: to
+          in: query
+          description: End timestamp (ISO 8601). Default is now.
+          schema:
+            $ref: '#/components/schemas/ISOTimestamp'
+        - name: limit
+          in: query
+          description: Maximum number of ticks to return (1-1000, default 100).
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+        - name: networks
+          in: query
+          description: Comma-separated list of networks to query.
+          schema:
+            type: string
+            example: "ethereum,arbitrum"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicksResponse'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /usage:
+    get:
+      summary: Get API Usage Statistics
+      description: |-
+        Get detailed usage statistics for your API key, including:
+        - Credits used (per minute and per month)
+        - API calls made (per minute and per month)
+        - Rate limits and remaining quota
+        - Billing period information
+      tags:
+        - Account
+      responses:
+        '200':
+          description: Usage statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsageResponse'
+        '401':
+          description: Unauthorized - API key required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+

@@ -1,0 +1,27 @@
+# OpenAPI Generator Ignore File
+# 
+# This file controls which files should NOT be overwritten during regeneration
+# Syntax: same as .gitignore
+
+# Protect the clean wrapper (everything except _internal/)
+qoery/__init__.py
+qoery/client.py
+qoery/models.py
+qoery/exceptions.py
+qoery/resources/
+
+# Allow regeneration of _internal/ (auto-generated code)
+# qoery/_internal/ will be regenerated
+# Protect examples using the wrapper
+examples/simple_usage.py
+
+# Protect our documentation
+README.md
+COMPARISON.md
+REGENERATION.md
+
+# Protect custom configuration
+.github/workflows/sync-openapi.yml
+
+# Allow regeneration of everything else
+# The auto-generated code in _internal/ will be refreshed
