@@ -19,21 +19,8 @@ Access real-time and historical DeFi data from Uniswap and other DEXs with the m
 
 ## Installation
 
-### From Source (Development)
-
 ```bash
-# Clone the repository
-git clone https://github.com/realfishsam/qoery-py.git
-cd qoery-py
-
-# Install in development mode
-pip install -e .
-```
-
-### From Git (Production)
-
-```bash
-pip install git+https://github.com/realfishsam/qoery-py.git
+pip install qoery
 ```
 
 ## Authentication
