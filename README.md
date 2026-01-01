@@ -1,15 +1,22 @@
+# qoery-py [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=50%25%20cheaper%20crypto%20data.%20Now%20in%20Python.&url=https://github.com/qoery-com/qoery-py&hashtags=python,crypto,data,trading,quant)
+
 <a href="https://www.producthunt.com/products/qoery-python-sdk?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-qoery-python-sdk" target="_blank" rel="noopener noreferrer"><img alt="Qoery Python SDK - 50% cheaper crypto data. Now in Python. | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1056631&amp;theme=light&amp;t=1767263265752"></a>
 
-# qoery-py
+[![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Downloads](https://pepy.tech/badge/qoery)](https://pepy.tech/project/qoery)
+![GitHub forks](https://img.shields.io/github/forks/qoery-com/qoery-py?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/qoery-com/qoery-py?style=social)
+[![GitHub stars](https://img.shields.io/github/stars/qoery-com/qoery-py?refresh=1)](https://github.com/qoery-com/qoery-py/stargazers)
+
+> **Professional Crypto Data at Indie Prices.**
+[![Stargazers repo roster for @qoery-com/qoery-py](https://reporoster.com/stars/qoery-com/qoery-py)](https://github.com/qoery-com/qoery-py/stargazers)
 
 **The Official Python SDK for Qoery - The Cheapest DeFi Data API**
 
 Access real-time and historical DeFi data from Uniswap and other DEXs with the most cost-effective API on the market.
 
-[![Python Version](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-
-## [Docs](https://qoery.com/docs/sdks/python/overview)
+**[Documentation](https://qoery.com/docs/sdks/python/overview)** | **[OHLCV Data](https://qoery.com/docs/sdks/python/candles)** | **[Tick-Level Data](https://qoery.com/docs/sdks/python/ticks)**
 
 ## Features
 
@@ -281,3 +288,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ---
 
 Made by the Qoery team
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=qoery-com/qoery-py&type=Timeline?refresh=1)](https://www.star-history.com/#qoery-com/qoery-py&Timeline)
